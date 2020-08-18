@@ -1,0 +1,32 @@
+{
+  "name": "ustglobal-versioncontrolled-keyvalue-store",
+  "version": "1.0.0",
+  "description": "version controlled key value store. Hiring assignment by ust-global-mydoc.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shakti45/ustGlobal-versionControlled-keyValue-store.git"
+  },
+  "keywords": [
+    "version-controlled",
+    "key-value",
+    "store"
+  ],
+  "author": "Shakti - one and only",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shakti45/ustGlobal-versionControlled-keyValue-store/issues"
+  },
+  "homepage": "https://github.com/shakti45/ustGlobal-versionControlled-keyValue-store#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mocha": "^8.1.1",
+    "mongoose": "^5.10.0",
+    "winston": "^3.3.3"
+  }
+}
