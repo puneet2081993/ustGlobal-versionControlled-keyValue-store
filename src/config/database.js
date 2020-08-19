@@ -7,7 +7,8 @@ class Database {
   }
   
 _connect() {
-     mongoose.connect(`${dbURL}`,{useNewUrlParser: true})
+    console.log(dbURL)
+     mongoose.connect(String(dbURL),{useNewUrlParser: true})
        .then(() => {
          console.log('Database connection successful')
        })

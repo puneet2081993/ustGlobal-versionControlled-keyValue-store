@@ -2,24 +2,24 @@ require('dotenv').config({path:'../ustGlobal-versionControlled-keyValue-store/.e
 const http = require('http')
 const {app,logger} = require('../middleware')
 const {port} = require('../vars')
-var cluster = require('cluster')
+// var cluster = require('cluster')
 
 const server = http.createServer(app) // including express middleware
-const numCPUs = require('os').cpus().length // cpu cores
+// const numCPUs = require('os').cpus().length // cpu cores
 
 
-if (cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`)
+// if (cluster.isMaster) {
+//   console.log(`Master ${process.pid} is running`)
 
-  //assigning workers for increasing request.
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork()
-  }
+//   //assigning workers for increasing request.
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork()
+//   }
 
-  cluster.on('exit', (worker) => {
-    console.log(`worker ${worker.process.pid} died`)
-  })
-} else {
+//   cluster.on('exit', (worker) => {
+//     console.log(`worker ${worker.process.pid} died`)
+//   })
+// } else {
     //starting server
     server.listen(port,
         ()=>{
@@ -27,4 +27,4 @@ if (cluster.isMaster) {
             logger.log('info',`Server started running on port ${port}`)
         }
     )
-}
+// }
