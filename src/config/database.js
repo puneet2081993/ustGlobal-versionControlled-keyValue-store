@@ -8,7 +8,7 @@ class Database {
   
 _connect() {
     console.log(String(dbURL))
-     mongoose.connect(String(dbURL),{useNewUrlParser: true})
+     mongoose.connect('mongodb://heroku_rsw0c9l9:73t43tj044e3eig8rtccghaafr@ds031721.mlab.com:31721/heroku_rsw0c9l9',{useNewUrlParser: true})
        .then(() => {
          console.log('Database connection successful')
        })
