@@ -7,12 +7,12 @@ require('../../config/database')
 this query gets recent value based on key passed 
 */
 let getKeyValue = async (key) => {
-    let result = null
+    let result = {}
     await keyValueStoreModel.findOne({'expired':false,'key':key})
     .then((response)=>{
         result = response
     })
-    return (result['value'])?result['value']:null
+    return result
 }
 /*
 @param key
@@ -20,23 +20,17 @@ let getKeyValue = async (key) => {
 this query gets recent active value based on key and timestamp passed 
 */
 let getKeyValueByTimestamp = async (key,timestamp) => {
-    let result = null
-    this.key = key
-    this.timestamp = timestamp
-    // await keyValueStoreModel.findOne({'expired':false,'key':key,'updatedAt':{'$lte':timestamp}})
-    // .then((response)=>{
-    //     result = response
-    // })
+    let result = {}
     await keyValueStoreModel.aggregate([
         {
             '$match':{
-                'key': String(this.key),
+                'key': key,
                 'updatedAt':{
-                    '$gte':this.timestamp
+                    '$gte':timestamp
                     },
                 
                 'createdAt':{
-                    '$lte':this.timestamp
+                    '$lte':timestamp
                     }
                 }
         },
@@ -46,7 +40,7 @@ let getKeyValueByTimestamp = async (key,timestamp) => {
         {
             '$match':{
                 'history.updatedAt':{
-                    '$lte':this.timestamp
+                    '$lte':timestamp
                     }
                 }
         },
@@ -68,9 +62,8 @@ let getKeyValueByTimestamp = async (key,timestamp) => {
         }
     ])
     .then((response)=>{
-        console.log('response',response)
         if(response[0]){
-        result = new Date(response[0]['updatedAt'])>this.timestamp?response[0]['history']['value']:response[0]['value']
+        result['value'] = new Date(response[0]['updatedAt'])>timestamp?response[0]['history']['value']:response[0]['value']
         }
     })
     return result
@@ -81,7 +74,7 @@ let getKeyValueByTimestamp = async (key,timestamp) => {
 this query inserts new object either based on time bucket i.e 60 min or if no record exist, for its respective key
 */
 let insertKeyValue = async (key,value) => {
-    let result = null
+    let result = {}
     await keyValueStoreModel.create({'expired':false,'key':key,'value':value,'createdAt':isoDate()})
     .then((response)=>{
         result = response
@@ -95,7 +88,7 @@ let insertKeyValue = async (key,value) => {
 this query updates existing key to new value based, saves old value and timestamp into history object.
 */
 let updateKeyValue = async (key,value,record) => {
-    let result = null
+    let result = {}
     await keyValueStoreModel.findOneAndUpdate({'expired':false,'key':key},{
         '$push':{
             "history":{
@@ -121,7 +114,7 @@ let updateKeyValue = async (key,value,record) => {
 this query updates existing key expired status to true based on bucket criteria.
 */
 let updateKeyExpired = async (key,expired) => {
-    let result = null
+    let result = {}
     await keyValueStoreModel.findOneAndUpdate({'expired':false,'key':key},{
         '$set':{
             'expired': expired
@@ -148,7 +141,7 @@ If no activity is performed
     return null    
 */
 let insertOrUpdate = async (key,value) => {
-    let res = null
+    let res = {}
     let record = await getKeyValue(key)
     if(record == null){
         res = await insertKeyValue(key,value)

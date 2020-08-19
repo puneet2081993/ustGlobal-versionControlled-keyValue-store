@@ -10,7 +10,7 @@ let getKeyValue = async(key) => {
         key = key?String(key):null
         if(key!==null){
             let res = await keyValueQuery.getKeyValue(key)
-            res = res?{value:res} : 'No record Found'
+            res = (res&&(res!==null))?{value:res['value']} : 'No record Found'
             return res
         } else {
             return 'Invalid Key: Key can not be null'
@@ -32,7 +32,7 @@ let getKeyValueByTimestamp = async (key,timestamp) => {
         timestamp = timestamp?new Date(Number(timestamp)*1000):null
         if((key!==null)&&(timestamp!==null)){
             let res = await keyValueQuery.getKeyValueByTimestamp(key,timestamp)
-            res = res?{value:res} : 'No record Found'
+            res = (res&&(res!==null))?{value:res['value']} : 'No record Found'
             return res
         } else {
             return "Invalid Key or Timestamp: Key or timestamp cannot be null"
@@ -53,7 +53,7 @@ let insertOrUpdateKey = async (key,value)=> {
         value = value?value:null
         if((key!==null)&&(value!==null)){
             let res = await keyValueQuery.insertOrUpdate(key,value)
-            res = res?{key:res['key'],value:res['value'],timestamp:(new Date(res['updatedAt'])/ 1000 | 0)} : 'Could not update value'
+            res = (res&&(res!==null))?{key:res['key'],value:res['value'],timestamp:(new Date(res['updatedAt'])/ 1000 | 0)} : 'Could not update value'
             return res
         } else {
             return 'Invalid Key or Value: Either key or value is null'

@@ -1,4 +1,4 @@
-const {dbURL,database} = require('../vars')
+const {dbURL} = require('../vars')
 let mongoose = require('mongoose')
 
 class Database {
@@ -7,7 +7,7 @@ class Database {
   }
   
 _connect() {
-     mongoose.connect(`mongodb://${dbURL}/${database}`)
+     mongoose.connect(`${dbURL}`)
        .then(() => {
          console.log('Database connection successful')
        })
