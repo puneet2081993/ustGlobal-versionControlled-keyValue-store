@@ -7,12 +7,13 @@ class Database {
   }
   
 _connect() {
-    console.log(dbURL)
+    console.log(String(dbURL))
      mongoose.connect(String(dbURL),{useNewUrlParser: true})
        .then(() => {
          console.log('Database connection successful')
        })
        .catch(err => {
+           console.log(err)
          console.error('Database connection error')
        })
   }
