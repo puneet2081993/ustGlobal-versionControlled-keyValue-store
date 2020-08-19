@@ -1,5 +1,6 @@
 const {keyValueStoreModel} = require('../models/keyValueStoreModel')
 let {isoDate} = require('../../helper')
+var mongoose = require('mongoose')
 require('../../config/database')
 /*
 @param key
@@ -11,7 +12,7 @@ let getKeyValue = async (key) => {
     .then((response)=>{
         result = response
     })
-    return result
+    return (result['value'])?result['value']:null
 }
 /*
 @param key
@@ -20,11 +21,58 @@ this query gets recent active value based on key and timestamp passed
 */
 let getKeyValueByTimestamp = async (key,timestamp) => {
     let result = null
-    await keyValueStoreModel.findOne({'expired':false,'key':key,'updatedAt':{'$lte':timestamp}})
+    this.key = key
+    this.timestamp = timestamp
+    // await keyValueStoreModel.findOne({'expired':false,'key':key,'updatedAt':{'$lte':timestamp}})
+    // .then((response)=>{
+    //     result = response
+    // })
+    await keyValueStoreModel.aggregate([
+        {
+            '$match':{
+                'key': String(this.key),
+                'updatedAt':{
+                    '$gte':this.timestamp
+                    },
+                
+                'createdAt':{
+                    '$lte':this.timestamp
+                    }
+                }
+        },
+        {
+            '$unwind': '$history'
+        },
+        {
+            '$match':{
+                'history.updatedAt':{
+                    '$lte':this.timestamp
+                    }
+                }
+        },
+        {
+            '$sort':{
+                'history.updatedAt':-1
+                }
+        },
+        {
+            '$limit':1
+        },
+        {
+            '$project':{
+                '_id':0,
+                'expired':0,
+                '__v':0,
+                
+                }
+        }
+    ])
     .then((response)=>{
-        result = response
+        console.log('response',response)
+        if(response[0]){
+        result = new Date(response[0]['updatedAt'])>this.timestamp?response[0]['history']['value']:response[0]['value']
+        }
     })
-    
     return result
 }
 /*
@@ -38,7 +86,6 @@ let insertKeyValue = async (key,value) => {
     .then((response)=>{
         result = response
     })
-    console.log('Insert Query', result, typeof result)
     return result
 }
 /*
@@ -105,7 +152,7 @@ let insertOrUpdate = async (key,value) => {
     let record = await getKeyValue(key)
     if(record == null){
         res = await insertKeyValue(key,value)
-    } else if((record['createdAt'])&&((isoDate()-record['createdAt'])/60e3)> 3){
+    } else if((record['createdAt'])&&((isoDate()-record['createdAt'])/60e3)> 60){
         res = await updateKeyExpired(key,true)
         if(res.expired){
             record = await insertKeyValue(key,value)

@@ -4,7 +4,8 @@
   "description": "version controlled key value store. Hiring assignment by ust-global-mydoc.",
   "main": "server.js",
   "scripts": {
-    "test": "mocha ./src/test/database/queryTest.js --recursive exit"
+    "test": "mocha ./src/test/*/*.js --recursive exit",
+    "start": "node ./src/bin/server.js"
   },
   "repository": {
     "type": "git",

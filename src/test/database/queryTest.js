@@ -1,9 +1,10 @@
 var assert = require('chai').assert
-const keyValueQuery = require('../../database/query/getKeyValueQuery')
+const {keyValueQuery} = require('../../database')
 describe('Test Suite', ()=>{
   describe('Get Value By key Test', () => {
     it('it will return active key value', async() => {
       let res = await keyValueQuery.getKeyValue('e')
+      document(res)
       assert.equal(res['value'],36);
     });
   });
@@ -15,9 +16,9 @@ describe('Test Suite', ()=>{
   });
   describe('Insert Or Update Key and Value', () => {
     it('it will object with key, value, timestamp', async () => {
-      let res = await keyValueQuery.insertOrUpdate(e,37)
+      let res = await keyValueQuery.insertOrUpdate('e',37)
       let flag = ((res)&&(res!==null))?true:false
-      assert.equal(res,true)
+      assert.equal(flag,true)
     });
   });
 });
